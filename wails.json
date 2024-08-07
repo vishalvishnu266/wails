@@ -1,0 +1,10 @@
+{
+  "name": "vanilla",
+  "outputfilename": "vanilla",
+  "frontend:install": "",
+  "frontend:build": "",
+  "author": {
+    "name": "vishal",
+    "email": "vishalvishnu266@gmail.com"
+  }
+}
