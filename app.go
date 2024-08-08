@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 )
 
 // App struct
@@ -38,7 +40,31 @@ func (a *App) shutdown(ctx context.Context) {
 	// Perform your teardown here
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+type Greeting struct {
+	Name string `json:"name"`
 }
+
+
+// Greet returns a greeting for the given name
+func (a *App) Greet(jsonStr string) string {
+		var greeting Greeting
+
+	// Unmarshal JSON string into the Greeting struct
+	err := json.Unmarshal([]byte(jsonStr), &greeting)
+	if err != nil {
+		log.Fatalf("Error unmarshalling JSON: %v", err)
+	}
+	return fmt.Sprintf("Hello %s, It's show time!", greeting.Name)
+}
+
+func (a *App) Copy(jsonStr string) string {
+		var greeting Greeting
+
+	// Unmarshal JSON string into the Greeting struct
+	err := json.Unmarshal([]byte(jsonStr), &greeting)
+	if err != nil {
+		log.Fatalf("Error unmarshalling JSON: %v", err)
+	}
+	return fmt.Sprintf("Hello %s, It's show time!", greeting.Name)
+}
+

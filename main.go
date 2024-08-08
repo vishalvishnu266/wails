@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -16,10 +18,30 @@ var assets embed.FS
 
 //go:embed build/appicon.png
 var icon []byte
+func startHTTPServer() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hello, world!"))
+	})
+
+	server := &http.Server{
+		Addr:           ":4000", // Change this port if needed
+		WriteTimeout:   15 * time.Second,
+		ReadTimeout:    15 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	log.Println("Starting HTTP server on port 4000...")
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("HTTP server error: %v", err)
+	}
+}
 
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+	
+	go startHTTPServer()
 
 	// Create application with options
 	err := wails.Run(&options.App{

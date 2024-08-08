@@ -1,15 +1,39 @@
-//Global JS function for greeting
-function greet() {
-    //Get user input
-    let inputName = document.getElementById("name").value;
+const COMMAND_PREFIX = "/";
 
-    //Call Go Greet function
-    window.go.main.App.Greet(inputName).then(result => {
-        //Display result from Go
-        document.getElementById("result").innerHTML = result;
-    }).catch(err => {
-        console.log(err);
-    }).finally(() => {
-        console.log("fucking great!!!")
+const patchedSend = async function (params) {
+    // Make readonly properties writable
+    Object.defineProperty(this, "readyState", {writable: true})
+    Object.defineProperty(this, "status", {writable: true})
+    Object.defineProperty(this, "statusText", {writable: true})
+    Object.defineProperty(this, "response", {writable: true})
+
+    // Set response
+    const command = this.command;
+    const query = new URLSearchParams(params);
+    const queryObj = Object.fromEntries(query);
+
+    console.log("query")
+    console.log(query)
+    console.log("query")
+    // this.response = window.go.main.App.Greet()
+    console.log(command)
+
+    console.log(queryObj)
+    this.response = await window.go.main.App[command](JSON.stringify(queryObj));
+    this.readyState = XMLHttpRequest.DONE;
+    this.status = 200;
+    this.statusText = "OK";
+
+    // We only need load event to trigger a XHR response
+    this.dispatchEvent(new ProgressEvent("load"));
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener('htmx:beforeSend', (event) => {
+        const path = event.detail.requestConfig.path;
+        if (path.startsWith(COMMAND_PREFIX)) {
+            event.detail.xhr.command = path.slice(COMMAND_PREFIX.length);
+            event.detail.xhr.send = patchedSend;
+        }
     });
-}
+});
