@@ -21,11 +21,14 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
+	log.Printf("startup")
+
 }
 
 // domReady is called after front-end resources have been loaded
 func (a App) domReady(ctx context.Context) {
 	// Add your action here
+	log.Printf("domready")
 }
 
 // beforeClose is called when the application is about to quit,
@@ -37,6 +40,7 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
+	log.Printf("shutdown")
 	// Perform your teardown here
 }
 

@@ -19,13 +19,7 @@
         <!--  -->
     </header>
     <main>
-        <!-- <div class="logo"></div>
-        <div class="result" id="result">Please enter your name below 👇</div>
-        <div class="input-box" id="input">
-            <input class="input" id="name" type="text" autocomplete="off" onkeydown="if (event.keyCode === 13) {greet()}" />
-            <button class="btn" onclick="greet()">Greet</button>
-        </div> -->
-              <div class="row">
+        <div class="row">
         <input id="greet-input" name="name" placeholder="Enter a name..." />
         <button type="button" hx-post="/Greet" hx-include="[name='name']" hx-trigger="click" hx-target="#greet-msg" hx-swap="innerHTML">Greet</button>
       </div>

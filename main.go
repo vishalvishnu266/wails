@@ -8,9 +8,13 @@ import (
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
+		"github.com/wailsapp/wails/v2/pkg/runtime"
+
 )
 
 //go:embed frontend/src
@@ -42,6 +46,17 @@ func main() {
 	app := NewApp()
 	
 	go startHTTPServer()
+	    AppMenu := menu.NewMenu()
+    FileMenu := AppMenu.AddSubmenu("File")
+    // FileMenu.AddText("&Open", keys.CmdOrCtrl("o"), openFile)
+    // FileMenu.AddSeparator()
+    FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
+        runtime.Quit(app.ctx)
+    })
+
+    // if runtime.GOOS == "darwin" {
+    // AppMenu.Append(menu.EditMenu())  // on macos platform, we should append EditMenu to enable Cmd+C,Cmd+V,Cmd+Z... shortcut
+    // }
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -51,20 +66,20 @@ func main() {
 		MinWidth:          1024,
 		MinHeight:         768,
 		DisableResize:     false,
-		Fullscreen:        false,
+		Fullscreen:        true,
 		Frameless:         false,
 		StartHidden:       false,
 		HideWindowOnClose: false,
 		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 255},
 		Assets:            assets,
-		Menu:              nil,
+		Menu:              AppMenu,
 		Logger:            nil,
 		LogLevel:          logger.DEBUG,
 		OnStartup:         app.startup,
 		OnDomReady:        app.domReady,
 		OnBeforeClose:     app.beforeClose,
 		OnShutdown:        app.shutdown,
-		WindowStartState:  options.Normal,
+		WindowStartState:  options.Fullscreen,
 		Bind: []interface{}{
 			app,
 		},
